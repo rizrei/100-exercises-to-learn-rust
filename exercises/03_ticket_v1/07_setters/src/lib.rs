@@ -11,27 +11,17 @@ pub struct Ticket {
 
 impl Ticket {
     pub fn new(title: String, description: String, status: String) -> Ticket {
-        if title.is_empty() {
-            panic!("Title cannot be empty");
-        }
-        if title.len() > 50 {
-            panic!("Title cannot be longer than 50 bytes");
-        }
-        if description.is_empty() {
-            panic!("Description cannot be empty");
-        }
-        if description.len() > 500 {
-            panic!("Description cannot be longer than 500 bytes");
-        }
-        if status != "To-Do" && status != "In Progress" && status != "Done" {
-            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
-        }
-
-        Ticket {
+        let ticket = Ticket {
             title,
             description,
             status,
-        }
+        };
+
+        ticket
+            .validate_title()
+            .validate_description()
+            .validate_status();
+        ticket
     }
 
     pub fn title(&self) -> &String {
@@ -44,6 +34,71 @@ impl Ticket {
 
     pub fn status(&self) -> &String {
         &self.status
+    }
+
+    pub fn set_title(&mut self, title: String) {
+        self.title = title;
+        self.validate_title();
+    }
+
+    pub fn set_description(&mut self, description: String) {
+        self.description = description;
+        self.validate_description();
+    }
+
+    pub fn set_status(&mut self, status: String) {
+        self.status = status;
+        self.validate_status();
+    }
+
+    fn validate_title(&self) -> &Self {
+        if !self.is_valid_title() {
+            panic!("Title cannot be empty");
+        }
+        if !self.is_valid_title_length() {
+            panic!("Title cannot be longer than 50 bytes");
+        }
+
+        self
+    }
+
+    fn validate_description(&self) -> &Self {
+        if !self.is_valid_description() {
+            panic!("Description cannot be empty");
+        }
+        if !self.is_valid_description_length() {
+            panic!("Description cannot be longer than 500 bytes");
+        }
+
+        self
+    }
+
+    fn validate_status(&self) -> &Self {
+        if !self.is_valid_status() {
+            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
+        }
+
+        self
+    }
+
+    fn is_valid_title(&self) -> bool {
+        !self.title.is_empty()
+    }
+
+    fn is_valid_description(&self) -> bool {
+        !self.description.is_empty()
+    }
+
+    fn is_valid_status(&self) -> bool {
+        self.status == "To-Do" || self.status == "In Progress" || self.status == "Done"
+    }
+
+    fn is_valid_title_length(&self) -> bool {
+        self.title.len() <= 50
+    }
+
+    fn is_valid_description_length(&self) -> bool {
+        self.description.len() <= 500
     }
 }
 
