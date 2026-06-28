@@ -3,5 +3,7 @@ pub fn example() {
     // via `std::mem::size_of` will result in a compile-time error.
     //
     // TODO: Comment out the following line and move on to the next exercise.
-    std::mem::size_of::<str>();
+
+    // let s = "hello world";
+    // std::mem::size_of::<str>(s);
 }
