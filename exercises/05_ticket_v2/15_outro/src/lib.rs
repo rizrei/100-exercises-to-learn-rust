@@ -12,7 +12,6 @@ pub use description::TicketDescription;
 pub use status::Status;
 pub use title::TicketTitle;
 
-#[derive(Debug, PartialEq, Clone)]
 // We no longer need to make the fields private!
 // Since each field encapsulates its own validation logic, there is no risk of
 // a user of `Ticket` modifying the fields in a way that would break the
@@ -21,6 +20,7 @@ pub use title::TicketTitle;
 // Careful though: if you had any invariants that spanned multiple fields, you
 // would need to ensure that those invariants are still maintained and go back
 // to making the fields private.
+#[derive(Debug, PartialEq, Clone)]
 pub struct Ticket {
     pub title: TicketTitle,
     pub description: TicketDescription,
