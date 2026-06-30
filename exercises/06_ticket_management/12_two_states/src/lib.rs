@@ -6,15 +6,55 @@
 // You also need to add a `get` method that takes as input a `TicketId`
 // and returns an `Option<&Ticket>`.
 
+use std::option::Option;
 use ticket_fields::{TicketDescription, TicketTitle};
 
 #[derive(Clone)]
 pub struct TicketStore {
+    next_id: TicketId,
     tickets: Vec<Ticket>,
+}
+
+impl TicketStore {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    pub fn add_ticket(&mut self, draft: TicketDraft) -> TicketId {
+        let id = self.next_id;
+        let ticket = Ticket {
+            id,
+            title: draft.title,
+            description: draft.description,
+            status: Status::ToDo,
+        };
+        self.tickets.push(ticket);
+        self.next_id = id.next();
+        id
+    }
+
+    pub fn get(&self, id: TicketId) -> Option<&Ticket> {
+        self.tickets.iter().find(|&ticket| ticket.id == id)
+    }
+}
+
+impl Default for TicketStore {
+    fn default() -> Self {
+        Self {
+            next_id: TicketId(1),
+            tickets: Vec::new(),
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct TicketId(u64);
+
+impl TicketId {
+    pub fn next(&self) -> TicketId {
+        Self(self.0 + 1)
+    }
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Ticket {
@@ -35,18 +75,6 @@ pub enum Status {
     ToDo,
     InProgress,
     Done,
-}
-
-impl TicketStore {
-    pub fn new() -> Self {
-        Self {
-            tickets: Vec::new(),
-        }
-    }
-
-    pub fn add_ticket(&mut self, ticket: Ticket) {
-        self.tickets.push(ticket);
-    }
 }
 
 #[cfg(test)]
